@@ -305,7 +305,7 @@ static NSString * const kOpenAppItem = @"com.codetouchbar.studio.open-app";
 
 - (NSString *)subtitleForProvider:(NSString *)provider {
     if ([provider isEqualToString:@"codex"]) return @"Sessão 5h / Quota semanal";
-    if ([provider isEqualToString:@"claude"]) return @"Histórico local do Claude Desktop";
+    if ([provider isEqualToString:@"claude"]) return @"Claude Code CLI · limites 5h e semanal";
     if ([provider isEqualToString:@"antigravity"]) return @"Cota do Language Server local";
     if ([provider isEqualToString:@"gemini"]) return @"Cota pessoal sem API documentada";
     if ([provider isEqualToString:@"deepseek"]) return @"Saldo da API (configure uma chave)";

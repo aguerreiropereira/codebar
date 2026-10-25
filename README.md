@@ -32,7 +32,7 @@ Ao abrir, o app exibe uma janela de controle com estados obtidos de fontes locai
 - **Indicadores Contextuais:** Os cards mostram percentuais quando há uma cota mensurável, saldo monetário para integrações de API, estado de modelos locais ou indisponibilidade explícita quando o provedor não oferece uma fonte automatizada adequada.
 - **Mais Modelos de LLM Suportados:**
   - **OpenAI Codex / ChatGPT:** Monitoramento de sessão de 5h e cota semanal.
-  - **Anthropic Claude:** Cota lida do histórico local do Claude Desktop quando disponível.
+  - **Anthropic Claude:** cota de 5 horas e semanal recebidas do status line oficial do Claude Code CLI.
   - **Google Antigravity:** Comunicação direta com o Language Server local e cota em tempo real.
   - **Google Gemini:** A cota da assinatura Gemini não tem API pública documentada; o card informa indisponibilidade.
   - **DeepSeek AI:** Saldo da API DeepSeek opcional, autenticado por chave guardada no Keychain. Esse saldo não é a cota do DeepSeek Chat.
@@ -78,6 +78,12 @@ As preferências do app nativo são salvas em `~/Library/Application Support/Cod
 
 O app tenta executar os coletores com Python 3 encontrado em `/opt/homebrew/bin/python3`, `/usr/local/bin/python3` ou `/usr/bin/python3`. A chave opcional da DeepSeek API fica no Keychain do macOS; ela não é gravada em `settings.json`.
 
+Para conectar a cota do Claude Code, execute uma vez `python3 scripts/install_claude_code_integration.py`. O instalador preserva as demais preferências de `~/.claude/settings.json` e não substitui um `statusLine` que já exista. Depois, ao usar o Claude Code, a primeira resposta envia as janelas de limite ao app; a integração local atualiza o cache a cada 60 segundos sem fazer chamadas adicionais ao modelo. Para o app baixado da release, execute o instalador dentro do bundle após movê-lo para Aplicativos:
+
+```sh
+python3 "/Applications/CodeTouchBar.app/Contents/Resources/scripts/install_claude_code_integration.py"
+```
+
 ## Limite e compatibilidade
 
 Para manter o atalho disponível enquanto outro aplicativo está em primeiro plano, o app usa funções privadas do macOS (`DFRFoundation`). A Apple não oferece uma API pública para esse comportamento global: a API pública `NSTouchBar` serve a Touch Bar do app em primeiro plano. Por isso, esta implementação pode deixar de funcionar após uma atualização do macOS e não é adequada para distribuição pela Mac App Store, que exige APIs públicas. Veja a [documentação oficial de NSTouchBar](https://developer.apple.com/documentation/appkit/nstouchbar) e as [regras de revisão da App Store](https://developer.apple.com/app-store/review/guidelines/).
@@ -93,7 +99,7 @@ O painel web existente ainda gera configuração para MTMR. Para usá-lo, instal
 Os coletores produzem resultados estruturados com tipo, estado, fonte, horário da leitura e texto de exibição. Tipos diferentes não são convertidos em percentuais. O app não depende do Codenotch.
 
 - **Codex:** usa a sessão local em `~/.codex/auth.json` e a rota privada de uso do ChatGPT. Essa rota pode mudar sem aviso; a documentação oficial indica o painel de uso e o comando `/status` como superfícies suportadas.
-- **Claude:** lê `~/Library/Application Support/Claude/plan-usage-history.json` quando presente. O caminho e formato são internos ao Claude Desktop; sem esse arquivo, o card informa indisponibilidade.
+- **Claude Code:** recebe `rate_limits.five_hour` e `rate_limits.seven_day` pelo status line oficial do CLI. O helper guarda somente percentuais, horários de reset e timestamp em `~/Library/Application Support/CodeTouchBar/claude-code-usage.json`; sem uma primeira resposta do CLI, o card informa que aguarda dados.
 - **Antigravity:** consulta o Language Server local (`RetrieveUserQuotaSummary`). Essa interface não é pública/documentada; valores em cache mostram idade e não disparam alertas como se fossem atuais.
 - **Gemini Apps:** a cota pessoal não tem API pública de leitura documentada e aparece como indisponível. Quotas da Gemini Developer API por projeto Google Cloud são uma integração diferente e não estão misturadas à assinatura Gemini.
 - **DeepSeek:** sem chave, mostra que a integração de API não está configurada. Com chave no Keychain, consulta `GET https://api.deepseek.com/user/balance` e exibe saldo monetário, não uma porcentagem de cota.
