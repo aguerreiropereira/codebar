@@ -335,6 +335,7 @@ static NSString * const kOpenAppItem = @"com.codetouchbar.studio.open-app";
     if (!status || [status isEqualToString:@"--"] || [status isEqualToString:@"Desativado"]) {
         return @"--";
     }
+    if ([status hasPrefix:@"Aguardando dados do Claude Code"]) return @"";
 
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(\\d+%(\\s*sem)?)" options:0 error:nil];
     NSTextCheckingResult *match = [regex firstMatchInString:status options:0 range:NSMakeRange(0, status.length)];
@@ -594,18 +595,37 @@ static void InitMediaRemote(void) {
 }
 
 - (void)handleEscTap {
+    if (@available(macOS 10.15, *)) {
+        if (!CGPreflightPostEventAccess() && !CGRequestPostEventAccess()) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            alert.messageText = @"Permissão necessária para a tecla ESC";
+            alert.informativeText = @"Permita que CodeTouchBar envie teclas em Ajustes do Sistema > Privacidade e Segurança > Acessibilidade. Depois tente ESC novamente.";
+            [alert addButtonWithTitle:@"Abrir Ajustes"];
+            [alert addButtonWithTitle:@"Agora não"];
+            if ([alert runModal] == NSAlertFirstButtonReturn) {
+                NSURL *settingsURL = [NSURL URLWithString:@"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"];
+                [[NSWorkspace sharedWorkspace] openURL:settingsURL];
+            }
+            return;
+        }
+    }
+
     CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+    if (!src) {
+        NSLog(@"CodeTouchBar: não foi possível criar a fonte do evento ESC.");
+        return;
+    }
     CGEventRef keyDown = CGEventCreateKeyboardEvent(src, (CGKeyCode)53, true);
     CGEventRef keyUp = CGEventCreateKeyboardEvent(src, (CGKeyCode)53, false);
-    CGEventPost(kCGHIDEventTap, keyDown);
-    CGEventPost(kCGHIDEventTap, keyUp);
-    CGEventPost(kCGSessionEventTap, keyDown);
-    CGEventPost(kCGSessionEventTap, keyUp);
+    if (keyDown && keyUp) {
+        CGEventPost(kCGHIDEventTap, keyDown);
+        CGEventPost(kCGHIDEventTap, keyUp);
+    } else {
+        NSLog(@"CodeTouchBar: não foi possível criar os eventos da tecla ESC.");
+    }
     if (keyDown) CFRelease(keyDown);
     if (keyUp) CFRelease(keyUp);
-    if (src) CFRelease(src);
-
-    [self runAppleScriptAsync:@"tell application \"System Events\" to key code 53"];
+    CFRelease(src);
 }
 
 - (void)postSystemKey:(int)keyType {

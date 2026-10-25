@@ -28,7 +28,7 @@ As versões empacotadas para instalação ficam na página de [Releases do GitHu
 Ao abrir, o app exibe uma janela de controle com estados obtidos de fontes locais ou integrações configuradas e fica acessível pelo ícone de brilho (**✨**) na barra de menus. O atalho compacto **AI** aparece fixado no Control Strip da Touch Bar.
 
 ### Experiência na Touch Bar
-- **Tecla ESC Virtual Fixa:** A tecla `esc` fica permanentemente acessível na extrema esquerda da Touch Bar em todos os modos, garantindo o funcionamento do Escape em qualquer app e no terminal sem conflitos.
+- **Tecla ESC Virtual Fixa:** O botão `esc` fica na extrema esquerda da Touch Bar. No primeiro uso, o macOS pode pedir permissão de Acessibilidade para enviar a tecla ao app em foco; o CodeTouchBar oferece um atalho para abrir esse ajuste.
 - **Indicadores Contextuais:** Os cards mostram percentuais quando há uma cota mensurável, saldo monetário para integrações de API, estado de modelos locais ou indisponibilidade explícita quando o provedor não oferece uma fonte automatizada adequada.
 - **Mais Modelos de LLM Suportados:**
   - **OpenAI Codex / ChatGPT:** Monitoramento de sessão de 5h e cota semanal.
@@ -112,7 +112,7 @@ Os botões de controle na Touch Bar utilizam integrações diretas do macOS para
 - **Brilho:** `DisplayServices.framework` lê e ajusta o monitor principal em passos de 1/16; se o serviço não estiver disponível, o app tenta a tecla do sistema.
 - **Volume:** botões Mudo, Diminuir e Aumentar leem e ajustam a saída padrão via Core Audio HAL. O botão Mudo tenta a tecla do sistema quando a saída não expõe uma propriedade de mute.
 - **Mídia:** `MediaRemote.framework` (`MRMediaRemoteSendCommand`) com dual trigger em AppleScript para Spotify e Apple Music.
-- **ESC:** Tecla virtual 53 despachada simultaneamente para o `kCGHIDEventTap` e `kCGSessionEventTap`.
+- **ESC:** Tecla virtual 53 enviada uma vez pelo `kCGHIDEventTap`, após verificar a permissão de Post Event do macOS.
 
 ## Estrutura
 
