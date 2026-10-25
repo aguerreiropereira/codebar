@@ -13,6 +13,8 @@ static NSString * const kTrayIdentifier = @"com.codetouchbar.studio.usage";
 
 // Tecla ESC virtual (vital para a Touch Bar física)
 static NSString * const kEscItem = @"com.codetouchbar.studio.esc";
+static NSString * const kEscPostEventRequestedKey = @"escPostEventPermissionRequested";
+static NSString * const kEscPermissionGuidanceShownKey = @"escPermissionGuidanceShown";
 
 // Modelos LLM
 static NSString * const kCodexItem = @"com.codetouchbar.studio.codex";
@@ -596,7 +598,15 @@ static void InitMediaRemote(void) {
 
 - (void)handleEscTap {
     if (@available(macOS 10.15, *)) {
-        if (!CGPreflightPostEventAccess() && !CGRequestPostEventAccess()) {
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        if (!CGPreflightPostEventAccess() && ![defaults boolForKey:kEscPostEventRequestedKey]) {
+            [defaults setBool:YES forKey:kEscPostEventRequestedKey];
+            CGRequestPostEventAccess();
+            if (!CGPreflightPostEventAccess()) return;
+        }
+
+        if (!CGPreflightPostEventAccess() && ![defaults boolForKey:kEscPermissionGuidanceShownKey]) {
+            [defaults setBool:YES forKey:kEscPermissionGuidanceShownKey];
             NSAlert *alert = [[NSAlert alloc] init];
             alert.messageText = @"Permissão necessária para a tecla ESC";
             alert.informativeText = @"Permita que CodeTouchBar envie teclas em Ajustes do Sistema > Privacidade e Segurança > Acessibilidade. Depois tente ESC novamente.";
@@ -608,6 +618,7 @@ static void InitMediaRemote(void) {
             }
             return;
         }
+        if (!CGPreflightPostEventAccess()) return;
     }
 
     CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
