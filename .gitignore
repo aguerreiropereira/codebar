@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Local configuration and generated MTMR output
+/config/settings.json
+/config/items.json
+/dist/
+/session-ses_*.md

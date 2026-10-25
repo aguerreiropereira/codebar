@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeTouchBar — Configuração da Touch Bar</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">🎛️</div>
+        <div>
+          <h1>CodeTouchBar Studio</h1>
+          <p class="subtitle">Personalizador dos Modelos de IA na Touch Bar do MacBook Pro</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span class="status-indicator active">
+          <span class="dot"></span> MTMR Ativo
+        </span>
+        <button id="save-btn" class="btn btn-primary" onclick="saveConfiguration()">
+          <span class="btn-icon">💾</span> Salvar & Aplicar
+        </button>
+      </div>
+    </header>
+
+    <!-- Interactive Live Touch Bar Preview -->
+    <section class="preview-section">
+      <div class="section-header">
+        <h2>Pré-visualização em Tempo Real</h2>
+        <span class="hint">Representação fiel do que é exibido no seu hardware</span>
+      </div>
+      <div class="touchbar-chassis">
+        <div class="touchbar-notch-indicator">TOUCH BAR</div>
+        <div id="touchbar-preview" class="touchbar-strip">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Configuration Grids -->
+    <main class="settings-grid">
+      <!-- AI Models Section -->
+      <section class="settings-card">
+        <div class="card-title">
+          <span class="card-icon">🧠</span>
+          <div>
+            <h3>Modelos de Inteligência Artificial</h3>
+            <p>Selecione quais assistentes exibir e configure seus intervalos de atualização</p>
+          </div>
+        </div>
+
+        <div class="widget-list">
+          <!-- Codex -->
+          <div class="widget-row" data-id="codex">
+            <div class="widget-meta">
+              <img src="/api/icon/codex" class="model-logo" alt="Codex">
+              <div>
+                <div class="widget-name">OpenAI Codex</div>
+                <div class="widget-desc" id="codex-live-desc">Carregando métricas...</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <div class="refresh-selector">
+                <label>Atualizar a cada:</label>
+                <select id="codex-refresh" onchange="markDirty()">
+                  <option value="15">15s</option>
+                  <option value="30">30s</option>
+                  <option value="60">1m</option>
+                  <option value="120">2m</option>
+                </select>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="codex-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Claude -->
+          <div class="widget-row" data-id="claude">
+            <div class="widget-meta">
+              <img src="/api/icon/claude" class="model-logo" alt="Claude">
+              <div>
+                <div class="widget-name">Anthropic Claude</div>
+                <div class="widget-desc" id="claude-live-desc">Carregando métricas...</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <div class="refresh-selector">
+                <label>Atualizar a cada:</label>
+                <select id="claude-refresh" onchange="markDirty()">
+                  <option value="15">15s</option>
+                  <option value="30">30s</option>
+                  <option value="60">1m</option>
+                  <option value="120">2m</option>
+                </select>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="claude-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Antigravity -->
+          <div class="widget-row" data-id="antigravity">
+            <div class="widget-meta">
+              <img src="/api/icon/antigravity" class="model-logo" alt="Antigravity">
+              <div>
+                <div class="widget-name">Google Antigravity</div>
+                <div class="widget-desc" id="antigravity-live-desc">Carregando métricas...</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <div class="refresh-selector">
+                <label>Atualizar a cada:</label>
+                <select id="antigravity-refresh" onchange="markDirty()">
+                  <option value="15">15s</option>
+                  <option value="30">30s</option>
+                  <option value="60">1m</option>
+                  <option value="120">2m</option>
+                </select>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="antigravity-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- System Controls Section -->
+      <section class="settings-card">
+        <div class="card-title">
+          <span class="card-icon">⚡</span>
+          <div>
+            <h3>Controles do Sistema & Ordem</h3>
+            <p>Ative teclas de atalho e organize a disposição dos elementos na barra</p>
+          </div>
+        </div>
+
+        <div class="widget-list">
+          <!-- Escape -->
+          <div class="widget-row" data-id="escape">
+            <div class="widget-meta">
+              <div class="sys-badge">ESC</div>
+              <div>
+                <div class="widget-name">Tecla Escape (Esc)</div>
+                <div class="widget-desc">Essencial para atalhos do teclado na extrema esquerda</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="escape-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Settings Button -->
+          <div class="widget-row" data-id="settings">
+            <div class="widget-meta">
+              <div class="sys-badge">⚙️</div>
+              <div>
+                <div class="widget-name">Botão de Configurações na Touch Bar</div>
+                <div class="widget-desc">Adiciona um ícone de engrenagem para abrir este painel com 1 toque</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="settings-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Volume -->
+          <div class="widget-row" data-id="volume">
+            <div class="widget-meta">
+              <div class="sys-badge">🔊</div>
+              <div>
+                <div class="widget-name">Controle de Volume</div>
+                <div class="widget-desc">Slider interativo de áudio na lateral direita</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="volume-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Battery -->
+          <div class="widget-row" data-id="battery">
+            <div class="widget-meta">
+              <div class="sys-badge">🔋</div>
+              <div>
+                <div class="widget-name">Nível de Bateria</div>
+                <div class="widget-desc">Ícone de status e porcentagem de carga</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="battery-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Clock -->
+          <div class="widget-row" data-id="clock">
+            <div class="widget-meta">
+              <div class="sys-badge">⏱️</div>
+              <div>
+                <div class="widget-name">Relógio Digital</div>
+                <div class="widget-desc">Horário atual no padrão HH:mm</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="clock-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Brightness -->
+          <div class="widget-row" data-id="brightness">
+            <div class="widget-meta">
+              <div class="sys-badge">☀️</div>
+              <div>
+                <div class="widget-name">Ajuste de Brilho da Tela</div>
+                <div class="widget-desc">Botões de aumentar e diminuir luminosidade</div>
+              </div>
+            </div>
+            <div class="widget-controls">
+              <label class="toggle-switch">
+                <input type="checkbox" id="brightness-enabled" onchange="markDirty()">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div>CodeTouchBar Studio • Painel legado de configuração MTMR</div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">Alterações salvas e aplicadas na Touch Bar!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>

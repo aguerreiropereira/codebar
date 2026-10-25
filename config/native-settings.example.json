@@ -1,0 +1,15 @@
+{
+  "refreshSeconds": 30,
+  "providers": {
+    "codex": true,
+    "claude": true,
+    "antigravity": true
+  },
+  "keepInMenuBar": true,
+  "limitWindow": "auto",
+  "antigravityMode": "auto",
+  "warningThreshold": 75,
+  "criticalThreshold": 90,
+  "showResetTime": true,
+  "notificationsEnabled": true
+}

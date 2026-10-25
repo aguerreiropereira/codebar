@@ -1,0 +1,14 @@
+{
+  "widgets": {
+    "escape": { "enabled": true, "width": 54 },
+    "codex": { "enabled": true, "refresh": 30, "bordered": true, "url": "https://chatgpt.com" },
+    "claude": { "enabled": true, "refresh": 30, "bordered": true, "url": "https://claude.ai" },
+    "antigravity": { "enabled": true, "refresh": 30, "bordered": true, "url": "" },
+    "settings": { "enabled": true },
+    "brightness": { "enabled": false },
+    "volume": { "enabled": true },
+    "battery": { "enabled": true },
+    "clock": { "enabled": true, "format": "HH:mm" }
+  },
+  "order": ["escape", "codex", "claude", "antigravity", "settings", "brightness", "volume", "battery", "clock"]
+}
